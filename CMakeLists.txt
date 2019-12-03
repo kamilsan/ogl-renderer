@@ -17,12 +17,13 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 set(PROJECT_CODE
-  window.hpp window.cpp
-  shaderProgram.hpp shaderProgram.cpp
-  src/glad.c
-  main.cpp)
+  include/renderer/window.hpp src/renderer/window.cpp
+  include/renderer/shaderProgram.hpp src/renderer/shaderProgram.cpp
+  src/glad/glad.c
+  src/renderer/main.cpp)
 
 include_directories(include)
+include_directories(include/renderer)
 
 add_executable(renderer ${PROJECT_CODE})
 target_link_libraries(renderer ${CMAKE_DL_LIBS})

@@ -1,45 +1,27 @@
 #include "shaderProgram.hpp"
 
-#include <iostream>
+#include <stdexcept>
+#include <sstream>
 
 ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
 {
-  auto vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-  glCompileShader(vertexShader);
-
-  int success;
-  char infoLog[512];
-
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if(!success)
-  {
-    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    std::cout << "An error occured during vertex shader compilation\n" << infoLog << std::endl;
-  }
-
-  auto fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-  glCompileShader(fragmentShader);
-
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-  if(!success)
-  {
-    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-    std::cout << "An error occured during fragment shader compilation\n" << infoLog << std::endl;
-  }
+  auto vertexShader = createCompiledShader(vertexShaderSource, GL_VERTEX_SHADER);
+  auto fragmentShader = createCompiledShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
 
   program_ = glCreateProgram();
-
   glAttachShader(program_, vertexShader);
   glAttachShader(program_, fragmentShader);
   glLinkProgram(program_);
 
-  glGetProgramiv(program_, GL_LINK_STATUS, &success);
-  if(!success) 
+  int result = 0;
+  glGetProgramiv(program_, GL_LINK_STATUS, &result);
+  if(!result) 
   {
+    char infoLog[512];
     glGetProgramInfoLog(program_, 512, NULL, infoLog);
-    std::cout << "An error occured during linking shader program\n" << infoLog << std::endl;
+    std::stringstream errorMsgStream;
+    errorMsgStream << "An error occured during linking shader program!" << std::endl << infoLog;
+    throw std::runtime_error(errorMsgStream.str());
   }
 
   glDeleteShader(vertexShader);
@@ -49,4 +31,24 @@ ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmen
 void ShaderProgram::use()
 {
   glUseProgram(program_);
+}
+
+GLuint ShaderProgram::createCompiledShader(const char* source, unsigned int shaderType)
+{
+  auto shader = glCreateShader(shaderType);
+  glShaderSource(shader, 1, &source, NULL);
+  glCompileShader(shader);
+
+  char infoLog[512];
+  int result = 0;
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+  if(!result)
+  {
+    glGetShaderInfoLog(shader, 512, NULL, infoLog);
+    std::stringstream errorMsgStream;
+    errorMsgStream << "An error occured during shader compilation!" << std::endl << infoLog;
+    throw std::runtime_error(errorMsgStream.str());
+  }
+
+  return shader;
 }

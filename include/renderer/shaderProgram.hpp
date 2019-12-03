@@ -10,4 +10,6 @@ public:
   void use();
 private:
   GLuint program_;
+
+  GLuint createCompiledShader(const char* source, unsigned int shaderType);
 };

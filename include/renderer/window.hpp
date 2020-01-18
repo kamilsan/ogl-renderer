@@ -9,6 +9,7 @@ public:
   ~Window();
 
   void update();
+  void setResizeCallback(void(*cb)(GLFWwindow*, int, int));
 
   unsigned int getWidth() const;
   unsigned int getHeight() const;

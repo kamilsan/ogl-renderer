@@ -19,6 +19,7 @@ find_package(OpenGL REQUIRED)
 set(PROJECT_CODE
   include/renderer/window.hpp src/renderer/window.cpp
   include/renderer/shaderProgram.hpp src/renderer/shaderProgram.cpp
+  include/renderer/mesh.hpp src/renderer/mesh.cpp
   src/glad/glad.c
   src/renderer/main.cpp)
 

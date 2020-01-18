@@ -48,6 +48,11 @@ void Window::update()
     running_ = false;
 }
 
+void Window::setResizeCallback(void(*cb)(GLFWwindow*, int, int))
+{
+  glfwSetFramebufferSizeCallback(window_, cb);
+}
+
 unsigned int Window::getWidth() const
 {
   return width_;

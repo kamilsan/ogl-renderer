@@ -4,4 +4,5 @@ CMakeFiles/
 CMakeCache.txt
 Makefile
 renderer
-!renderer/*
+!src/renderer
+!include/renderer

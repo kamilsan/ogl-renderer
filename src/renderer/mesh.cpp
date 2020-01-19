@@ -1,7 +1,18 @@
 #include "mesh.hpp"
 
-Mesh::Mesh(std::vector<float> verticies, std::vector<unsigned int> indicies)
+Mesh::Mesh(std::vector<Vertex> verticies, std::vector<unsigned int> indicies)
 {
+  std::vector<float> vboData;
+  for(auto vertex : verticies)
+  {
+    vboData.push_back(vertex.getPosition().x);
+    vboData.push_back(vertex.getPosition().y);
+    vboData.push_back(vertex.getPosition().z);
+    vboData.push_back(vertex.getColor().x);
+    vboData.push_back(vertex.getColor().y);
+    vboData.push_back(vertex.getColor().z);
+  }
+
   glGenBuffers(1, &VBO_);
   glGenBuffers(1, &IBO_);
   glGenVertexArrays(1, &VAO_);
@@ -10,13 +21,16 @@ Mesh::Mesh(std::vector<float> verticies, std::vector<unsigned int> indicies)
   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO_);
 
-  glBufferData(GL_ARRAY_BUFFER, verticies.size()*sizeof(float), 
-    verticies.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vboData.size()*sizeof(float), 
+    vboData.data(), GL_STATIC_DRAW);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size()*sizeof(unsigned int), 
     indicies.data(), GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  
   glBindVertexArray(0);
 
   count_ = indicies.size();

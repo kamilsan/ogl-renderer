@@ -3,10 +3,12 @@
 #include <vector>
 #include <glad/glad.h>
 
+#include "vertex.hpp"
+
 class Mesh
 {
 public:
-  Mesh(std::vector<float> verticies, std::vector<unsigned int> indicies);
+  Mesh(std::vector<Vertex> verticies, std::vector<unsigned int> indicies);
   Mesh(const Mesh& other) = delete;
   ~Mesh();
 

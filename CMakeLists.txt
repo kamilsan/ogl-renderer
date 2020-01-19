@@ -22,6 +22,7 @@ set(PROJECT_CODE
   include/renderer/mesh.hpp src/renderer/mesh.cpp
   include/renderer/matrix.hpp src/renderer/matrix.cpp
   include/renderer/vector.hpp
+  include/renderer/vertex.hpp
   src/glad/glad.c
   src/renderer/main.cpp)
 

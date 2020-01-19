@@ -11,6 +11,7 @@
 #include "shaderProgram.hpp"
 #include "mesh.hpp"
 #include "matrix.hpp"
+#include "vertex.hpp"
 
 const unsigned int WINDOW_WIDTH = 800;
 const unsigned int WINDOW_HEIGHT = 600;
@@ -38,8 +39,10 @@ int main()
   try
   {
     ShaderProgram shaderProgram(vsStream.str().c_str(), fsStream.str().c_str());
-    Mesh squere({-1.0, -1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0}, 
-      {0, 1, 2, 2, 3, 0});
+    Mesh triangle({Vertex{{-1.0, -1.0, 0.0}, {1.0, 0.0, 0.0}}, 
+                   Vertex{{0.0, 1.0, 0.0}, {0.0, 1.0, 0.0}}, 
+                   Vertex{{1.0, -1.0, 0.0}, {0.0, 0.0, 1.0}}}, 
+                   {0, 1, 2});
 
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     
@@ -64,11 +67,11 @@ int main()
       glUniformMatrix4fv(mmLoc, 1, GL_FALSE, Matrix::initRotation(0, angle, 0).getData());
 
       shaderProgram.use();
-      squere.draw();
+      triangle.draw();
 
       window.update();
 
-      angle += 0.01;
+      angle += 0.015;
     }
   }
   catch(std::runtime_error& err)

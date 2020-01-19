@@ -20,6 +20,7 @@ set(PROJECT_CODE
   include/renderer/window.hpp src/renderer/window.cpp
   include/renderer/shaderProgram.hpp src/renderer/shaderProgram.cpp
   include/renderer/mesh.hpp src/renderer/mesh.cpp
+  include/renderer/matrix.hpp src/renderer/matrix.cpp
   src/glad/glad.c
   src/renderer/main.cpp)
 

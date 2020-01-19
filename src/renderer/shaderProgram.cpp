@@ -28,9 +28,14 @@ ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmen
   glDeleteShader(fragmentShader);
 }
 
-void ShaderProgram::use()
+void ShaderProgram::use() const
 {
   glUseProgram(program_);
+}
+
+GLuint ShaderProgram::getUniformLocation(const std::string& name) const
+{
+  return glGetUniformLocation(program_, name.c_str());
 }
 
 GLuint ShaderProgram::createCompiledShader(const char* source, unsigned int shaderType)

@@ -12,6 +12,7 @@
 #include "mesh.hpp"
 #include "matrix.hpp"
 #include "vertex.hpp"
+#include "camera.hpp"
 
 const unsigned int WINDOW_WIDTH = 800;
 const unsigned int WINDOW_HEIGHT = 600;
@@ -43,31 +44,44 @@ int main()
                    Vertex{{0.0, 1.0, 0.0}, {0.0, 1.0, 0.0}}, 
                    Vertex{{1.0, -1.0, 0.0}, {0.0, 0.0, 1.0}}}, 
                    {0, 1, 2});
+  
+    Mesh quad({Vertex{{-1.0, -1.0, 0.0}, {0.09, 0.455, 0.5176}}, 
+                   Vertex{{-1.0, 1.0, 0.0}, {0.09, 0.455, 0.5176}}, 
+                   Vertex{{1.0, 1.0, 0.0}, {0.09, 0.455, 0.5176}}, 
+                   Vertex{{1.0, -1.0, 0.0}, {0.09, 0.455, 0.5176}}},
+                   {0, 1, 2, 2, 3, 0});
 
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    Camera camera{Vector{0, 0, -3}, Vector{0, 0, 1}, Vector{0, 1, 0}};
     
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     shaderProgram.use();
     auto mmLoc = shaderProgram.getUniformLocation("modelMatrix");
     auto vmLoc = shaderProgram.getUniformLocation("viewMatrix");
     auto pmLoc = shaderProgram.getUniformLocation("projectionMatrix");
 
     float aspectRatio = (float)window.getWidth() / window.getHeight();
-    Matrix viewMatrix = Matrix::initTranslation(0, 0, 2);
     Matrix projectionMatrix = Matrix::initPerspective(M_PI / 2, aspectRatio, 0.1, 1000);
 
-    glUniformMatrix4fv(vmLoc, 1, GL_FALSE, viewMatrix.getData());
-    glUniformMatrix4fv(pmLoc, 1, GL_FALSE, projectionMatrix.getData());
+    glUniformMatrix4fv(pmLoc, 1, GL_TRUE, projectionMatrix.getData());
 
-    float angle = 0;
+    float angle = M_PI/2;
     while(window.isRunning())
     {
       glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
 
-      glUniformMatrix4fv(mmLoc, 1, GL_FALSE, Matrix::initRotation(0, angle, 0).getData());
+      Vector cameraPos = {3.0f * cos(angle), 0, 3.0f * sin(angle)};
+      camera.setPosition(cameraPos);
+      camera.setForward(-cameraPos);
+      glUniformMatrix4fv(vmLoc, 1, GL_TRUE, camera.getViewMatrix().getData());
+      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, Matrix::initIdentity().getData());
 
-      shaderProgram.use();
+      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, Matrix::initTranslation(1.25, 0, 0).getData());
       triangle.draw();
+
+      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, Matrix::initTranslation(-1.25, 0, 0).getData());
+      quad.draw();
 
       window.update();
 

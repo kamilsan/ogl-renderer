@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 class Matrix
 {
@@ -23,6 +24,8 @@ public:
   Matrix operator-(const Matrix& other) const;
   Matrix operator*(const Matrix& other) const;
   Matrix operator*(float value) const;
+
+  inline friend std::ostream& operator<<(std::ostream& os, const Matrix& m);
 private:
   inline int idx(int i, int j) const;
 
@@ -32,4 +35,23 @@ private:
 inline int Matrix::idx(int i, int j) const
 {
   return 4*j + i;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Matrix& m)
+{
+  for(int j = 0; j < 4; ++j)
+  {
+    os << '[';
+    for(int i = 0; i < 4; ++i)
+    {
+      os << m[m.idx(i, j)];
+      if(i != 3)
+        os << ", ";
+    }
+    os << ']';
+    if(j != 3)
+      os << '\n';
+  }
+
+  return os;
 }

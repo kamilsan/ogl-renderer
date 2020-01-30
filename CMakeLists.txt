@@ -21,6 +21,7 @@ set(PROJECT_CODE
   include/renderer/shaderProgram.hpp src/renderer/shaderProgram.cpp
   include/renderer/mesh.hpp src/renderer/mesh.cpp
   include/renderer/matrix.hpp src/renderer/matrix.cpp
+  include/renderer/camera.hpp src/renderer/camera.cpp
   include/renderer/vector.hpp
   include/renderer/vertex.hpp
   src/glad/glad.c

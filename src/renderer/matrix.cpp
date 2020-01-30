@@ -30,10 +30,10 @@ Matrix Matrix::initScale(float sx, float sy, float sz)
 
 Matrix Matrix::initTranslation(float tx, float ty, float tz)
 {
-  return Matrix({1, 0, 0, 0,
-                 0, 1, 0, 0,
-                 0, 0, 1, 0,
-                 tx, ty, tz, 1});
+  return Matrix({1, 0, 0, tx,
+                 0, 1, 0, ty,
+                 0, 0, 1, tz,
+                 0, 0, 0, 1});
 }
 
 Matrix Matrix::initPerspective(float fov, float ar, float zNear, float zFar)
@@ -42,8 +42,8 @@ Matrix Matrix::initPerspective(float fov, float ar, float zNear, float zFar)
   float zRange = zNear - zFar;
   return Matrix({1.0f / (tanHalfFOV * ar), 0, 0, 0,
                  0, 1.0f / tanHalfFOV, 0, 0,
-                 0, 0, (-zNear - zFar) / zRange, 1,
-                 0, 0, 2 * zFar * zNear / zRange, 0});
+                 0, 0, (-zNear - zFar) / zRange, 2 * zFar * zNear / zRange,
+                 0, 0, 1, 0});
 }
 
 Matrix Matrix::initRotation(float rx, float ry, float rz)

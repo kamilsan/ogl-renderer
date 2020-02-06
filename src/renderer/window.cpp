@@ -48,9 +48,20 @@ void Window::update()
     running_ = false;
 }
 
+void Window::close()
+{
+  running_ = false;
+  glfwSetWindowShouldClose(window_, true);
+}
+
 void Window::setResizeCallback(void(*cb)(GLFWwindow*, int, int))
 {
   glfwSetFramebufferSizeCallback(window_, cb);
+}
+
+GLFWwindow* Window::getWindowPtr()
+{
+  return window_;
 }
 
 unsigned int Window::getWidth() const

@@ -22,6 +22,33 @@ void onResize(GLFWwindow*, int width, int height)
   glViewport(0, 0, width, height);
 }
 
+void input(Window& window, Camera& camera)
+{
+  const float movementSpeed = 0.06f;
+  const float rotationSpeed = 0.02f;
+  
+  if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    window.close();
+  
+  if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_W) == GLFW_PRESS)
+    camera.move(Camera::CameraDirection::Forward, movementSpeed);
+  else if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_S) == GLFW_PRESS)
+    camera.move(Camera::CameraDirection::Back, movementSpeed);
+  else if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_A) == GLFW_PRESS)
+    camera.move(Camera::CameraDirection::Left, movementSpeed);
+  else if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_D) == GLFW_PRESS)
+    camera.move(Camera::CameraDirection::Right, movementSpeed);
+  
+  if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_UP) == GLFW_PRESS)
+    camera.rotateX(rotationSpeed);
+  else if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_DOWN) == GLFW_PRESS)
+    camera.rotateX(-rotationSpeed);
+  else if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_LEFT) == GLFW_PRESS)
+    camera.rotateY(rotationSpeed);
+  else if(glfwGetKey(window.getWindowPtr(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+    camera.rotateY(-rotationSpeed);
+}
+
 int main()
 {
   Window window{"OpenGL", WINDOW_WIDTH, WINDOW_HEIGHT};
@@ -65,15 +92,14 @@ int main()
 
     glUniformMatrix4fv(pmLoc, 1, GL_TRUE, projectionMatrix.getData());
 
-    float angle = M_PI/2;
+    float angle = M_PI / 2;
     while(window.isRunning())
     {
+      input(window, camera);
+      
       glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
 
-      Vector cameraPos = {3.0f * cos(angle), 0, 3.0f * sin(angle)};
-      camera.setPosition(cameraPos);
-      camera.setForward(-cameraPos);
       glUniformMatrix4fv(vmLoc, 1, GL_TRUE, camera.getViewMatrix().getData());
       glUniformMatrix4fv(mmLoc, 1, GL_TRUE, Matrix::initIdentity().getData());
 

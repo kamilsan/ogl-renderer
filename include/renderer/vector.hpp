@@ -15,10 +15,14 @@ struct Vector
   inline Vector cross(const Vector& other) const;
 
   inline Vector operator+(const Vector& other) const;
+  inline Vector& operator+=(const Vector& other);
   inline Vector operator-(const Vector& other) const;
+  inline Vector& operator-=(const Vector& other);
   inline Vector operator-() const;
   inline Vector operator*(float value) const;
+  inline Vector& operator*=(float value);
   inline Vector operator/(float value) const;
+  inline Vector& operator/=(float value);
   inline friend std::ostream& operator<<(std::ostream& os, const Vector& v);
 
   float x;
@@ -46,9 +50,27 @@ inline Vector Vector::operator+(const Vector& other) const
   return Vector(x + other.x, y + other.y, z + other.z);
 }
 
+inline Vector& Vector::operator+=(const Vector& other)
+{
+  x += other.x;
+  y += other.y;
+  z += other.z;
+
+  return *this;
+}
+
 inline Vector Vector::operator-(const Vector& other) const
 {
   return Vector(x - other.x, y - other.y, z - other.z);
+}
+
+inline Vector& Vector::operator-=(const Vector& other)
+{
+  x -= other.x;
+  y -= other.y;
+  z -= other.z;
+
+  return *this;
 }
 
 inline Vector Vector::operator-() const
@@ -61,12 +83,30 @@ inline Vector Vector::operator*(float value) const
   return Vector(x * value, y * value, z * value);
 }
 
+inline Vector& Vector::operator*=(float value)
+{
+  x *= value;
+  y *= value;
+  z *= value;
+
+  return *this;
+}
+
 inline Vector Vector::operator/(float value) const
 {
   float inv = 1.0/value;
   return Vector(x * inv, y * inv, z * inv);
 }
 
+inline Vector& Vector::operator/=(float value)
+{
+  float inv = 1.0/value;
+  x *= inv;
+  y *= inv;
+  z *= inv;
+
+  return *this;
+}
 
 inline std::ostream& operator<<(std::ostream& os, const Vector& v)
 {

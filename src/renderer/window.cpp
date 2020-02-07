@@ -12,7 +12,10 @@ Window::Window(const char* title, unsigned int width, unsigned int height):
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
+  GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+  const GLFWvidmode* mode = glfwGetVideoMode(monitor);
   window_ = glfwCreateWindow(width, height, title, NULL, NULL);
 
   if(window_ == NULL)
@@ -20,6 +23,9 @@ Window::Window(const char* title, unsigned int width, unsigned int height):
     glfwTerminate();
     throw std::runtime_error("Failed to create GLFW window!");
   }
+
+  glfwSetWindowPos(window_, (mode->width - width_) / 2, (mode->height - height_) / 2);
+  glfwShowWindow(window_);
   glfwMakeContextCurrent(window_);
 
   if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

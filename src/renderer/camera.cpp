@@ -27,6 +27,7 @@ Matrix Camera::getViewMatrix() const
                             0, 1, 0, -position_.y,
                             0, 0, 1, -position_.z,
                             0, 0, 0, 1});
+
   Matrix cameraRotation({right_.x, right_.y, right_.z, 0,
                         up_.x, up_.y, up_.z, 0,
                         forward_.x, forward_.y, forward_.z, 0,

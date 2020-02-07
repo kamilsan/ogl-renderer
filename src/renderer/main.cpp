@@ -64,19 +64,52 @@ int main()
   fsStream << fsFile.rdbuf();
   fsFile.close();
 
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
+  glFrontFace(GL_CW);
+  glCullFace(GL_BACK);
+
   try
   {
     ShaderProgram shaderProgram(vsStream.str().c_str(), fsStream.str().c_str());
-    Mesh triangle({Vertex{{-1.0, -1.0, 0.0}, {1.0, 0.0, 0.0}}, 
-                   Vertex{{0.0, 1.0, 0.0}, {0.0, 1.0, 0.0}}, 
-                   Vertex{{1.0, -1.0, 0.0}, {0.0, 0.0, 1.0}}}, 
-                   {0, 1, 2});
-  
-    Mesh quad({Vertex{{-1.0, -1.0, 0.0}, {0.09, 0.455, 0.5176}}, 
-                   Vertex{{-1.0, 1.0, 0.0}, {0.09, 0.455, 0.5176}}, 
-                   Vertex{{1.0, 1.0, 0.0}, {0.09, 0.455, 0.5176}}, 
-                   Vertex{{1.0, -1.0, 0.0}, {0.09, 0.455, 0.5176}}},
-                   {0, 1, 2, 2, 3, 0});
+    
+    Mesh cube({Vertex({-1.0, -1.0, -1.0}, {1, 0, 0}), // front
+               Vertex({-1.0, 1.0, -1.0}, {1, 0, 0}),
+               Vertex({1.0, 1.0, -1.0}, {1, 0, 0}),
+               Vertex({1.0, -1.0, -1.0}, {1, 0, 0}),
+
+               Vertex({1.0, -1.0, -1.0}, {0, 1, 0}), // right
+               Vertex({1.0, 1.0, -1.0}, {0, 1, 0}),
+               Vertex({1.0, 1.0, 1.0}, {0, 1, 0}),
+               Vertex({1.0, -1.0, 1.0}, {0, 1, 0}), 
+
+               Vertex({1.0, -1.0, 1.0}, {0, 0, 1}), // back
+               Vertex({1.0, 1.0, 1.0}, {0, 0, 1}),
+               Vertex({-1.0, 1.0, 1.0}, {0, 0, 1}),
+               Vertex({-1.0, -1.0, 1.0}, {0, 0, 1}),
+
+               Vertex({-1.0, -1.0, 1.0}, {0, 1, 1}), // left
+               Vertex({-1.0, 1.0, 1.0}, {0, 1, 1}),
+               Vertex({-1.0, 1.0, -1.0}, {0, 1, 1}),
+               Vertex({-1.0, -1.0, -1.0}, {0, 1, 1}),
+
+               Vertex({-1.0, 1.0, -1.0}, {1, 0, 1}), // top
+               Vertex({-1.0, 1.0, 1.0}, {1, 0, 1}),
+               Vertex({1.0, 1.0, 1.0}, {1, 0, 1}),
+               Vertex({1.0, 1.0, -1.0}, {1, 0, 1}),
+
+               Vertex({-1.0, -1.0, 1.0}, {1, 1, 0}), // bottom
+               Vertex({-1.0, -1.0, -1.0}, {1, 1, 0}),
+               Vertex({1.0, -1.0, -1.0}, {1, 1, 0}),
+               Vertex({1.0, -1.0, 1.0}, {1, 1, 0}),
+              }, 
+              { 0, 1, 2, 2, 3, 0,
+                4, 5, 6, 6, 7, 4,
+                8, 9, 10, 10, 11, 8,
+                12, 13, 14, 14, 15, 12,
+                16, 17, 18, 18, 19, 16,
+                20, 21, 22, 22, 23, 20
+              });
 
     Camera camera{Vector{0, 0, -3}, Vector{0, 0, 1}, Vector{0, 1, 0}};
     
@@ -98,16 +131,13 @@ int main()
       input(window, camera);
       
       glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       glUniformMatrix4fv(vmLoc, 1, GL_TRUE, camera.getViewMatrix().getData());
-      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, Matrix::initIdentity().getData());
 
-      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, Matrix::initTranslation(1.25, 0, 0).getData());
-      triangle.draw();
-
-      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, Matrix::initTranslation(-1.25, 0, 0).getData());
-      quad.draw();
+      Matrix modelMatrix = Matrix::initRotation(angle, angle / 2, 0);
+      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, modelMatrix.getData());
+      cube.draw();
 
       window.update();
 

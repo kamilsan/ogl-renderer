@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-Camera::Camera(const Vector& position, const Vector& forward, const Vector& up): 
+Camera::Camera(const Vector3& position, const Vector3& forward, const Vector3& up): 
   position_(position)
 {
   forward_ = forward.normalize();
@@ -9,12 +9,12 @@ Camera::Camera(const Vector& position, const Vector& forward, const Vector& up):
   calculateVectors();
 }
 
-void Camera::setPosition(const Vector& position)
+void Camera::setPosition(const Vector3& position)
 {
   position_ = position;
 }
 
-void Camera::setForward(const Vector& forward)
+void Camera::setForward(const Vector3& forward)
 {
   forward_ = forward.normalize();
   calculateAngles();
@@ -69,17 +69,17 @@ void Camera::move(Camera::CameraDirection direction, float amt)
   }
 }
 
-const Vector& Camera::getForward() const
+const Vector3& Camera::getForward() const
 {
   return forward_;
 }
 
-const Vector& Camera::getRight() const
+const Vector3& Camera::getRight() const
 {
   return right_;
 }
 
-const Vector& Camera::getUp() const
+const Vector3& Camera::getUp() const
 {
   return up_;
 }
@@ -97,12 +97,12 @@ void Camera::calculateForwardFromAngles()
   float sinP = std::sin(pitch_);
   float cosP = std::cos(pitch_);
 
-  forward_ = Vector(cosY*cosP, sinP, sinY*cosP).normalize();
+  forward_ = Vector3(cosY*cosP, sinP, sinY*cosP).normalize();
 }
 
 void Camera::calculateVectors()
 {
-  up_ = Vector(0, 1, 0);
+  up_ = Vector3(0, 1, 0);
   right_ = up_.normalize().cross(forward_).normalize();
   up_ = forward_.cross(right_).normalize();  
 }

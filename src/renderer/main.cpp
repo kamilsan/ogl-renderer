@@ -13,6 +13,7 @@
 #include "matrix.hpp"
 #include "vertex.hpp"
 #include "camera.hpp"
+#include "texture.hpp"
 
 const unsigned int WINDOW_WIDTH = 800;
 const unsigned int WINDOW_HEIGHT = 600;
@@ -69,39 +70,41 @@ int main()
   glFrontFace(GL_CW);
   glCullFace(GL_BACK);
 
+  glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
   try
   {
     ShaderProgram shaderProgram(vsStream.str().c_str(), fsStream.str().c_str());
     
-    Mesh cube({Vertex({-1.0, -1.0, -1.0}, {1, 0, 0}), // front
-               Vertex({-1.0, 1.0, -1.0}, {1, 0, 0}),
-               Vertex({1.0, 1.0, -1.0}, {1, 0, 0}),
-               Vertex({1.0, -1.0, -1.0}, {1, 0, 0}),
+    Mesh cube({Vertex({-1.0, -1.0, -1.0}, {0, 0}), // front
+               Vertex({-1.0, 1.0, -1.0}, {0, 1}),
+               Vertex({1.0, 1.0, -1.0}, {1, 1}),
+               Vertex({1.0, -1.0, -1.0}, {1, 0}),
 
-               Vertex({1.0, -1.0, -1.0}, {0, 1, 0}), // right
-               Vertex({1.0, 1.0, -1.0}, {0, 1, 0}),
-               Vertex({1.0, 1.0, 1.0}, {0, 1, 0}),
-               Vertex({1.0, -1.0, 1.0}, {0, 1, 0}), 
+               Vertex({1.0, -1.0, -1.0}, {0, 0}), // right
+               Vertex({1.0, 1.0, -1.0}, {0, 1}),
+               Vertex({1.0, 1.0, 1.0}, {1, 1}),
+               Vertex({1.0, -1.0, 1.0}, {1, 0}), 
 
-               Vertex({1.0, -1.0, 1.0}, {0, 0, 1}), // back
-               Vertex({1.0, 1.0, 1.0}, {0, 0, 1}),
-               Vertex({-1.0, 1.0, 1.0}, {0, 0, 1}),
-               Vertex({-1.0, -1.0, 1.0}, {0, 0, 1}),
+               Vertex({1.0, -1.0, 1.0}, {0, 0}), // back
+               Vertex({1.0, 1.0, 1.0}, {0, 1}),
+               Vertex({-1.0, 1.0, 1.0}, {1, 1}),
+               Vertex({-1.0, -1.0, 1.0}, {1, 0}),
 
-               Vertex({-1.0, -1.0, 1.0}, {0, 1, 1}), // left
-               Vertex({-1.0, 1.0, 1.0}, {0, 1, 1}),
-               Vertex({-1.0, 1.0, -1.0}, {0, 1, 1}),
-               Vertex({-1.0, -1.0, -1.0}, {0, 1, 1}),
+               Vertex({-1.0, -1.0, 1.0}, {0, 0}), // left
+               Vertex({-1.0, 1.0, 1.0}, {0, 1}),
+               Vertex({-1.0, 1.0, -1.0}, {1, 1}),
+               Vertex({-1.0, -1.0, -1.0}, {1, 0}),
 
-               Vertex({-1.0, 1.0, -1.0}, {1, 0, 1}), // top
-               Vertex({-1.0, 1.0, 1.0}, {1, 0, 1}),
-               Vertex({1.0, 1.0, 1.0}, {1, 0, 1}),
-               Vertex({1.0, 1.0, -1.0}, {1, 0, 1}),
+               Vertex({-1.0, 1.0, -1.0}, {0, 0}), // top
+               Vertex({-1.0, 1.0, 1.0}, {0, 1}),
+               Vertex({1.0, 1.0, 1.0}, {1, 1}),
+               Vertex({1.0, 1.0, -1.0}, {1, 0}),
 
-               Vertex({-1.0, -1.0, 1.0}, {1, 1, 0}), // bottom
-               Vertex({-1.0, -1.0, -1.0}, {1, 1, 0}),
-               Vertex({1.0, -1.0, -1.0}, {1, 1, 0}),
-               Vertex({1.0, -1.0, 1.0}, {1, 1, 0}),
+               Vertex({-1.0, -1.0, 1.0}, {0, 0}), // bottom
+               Vertex({-1.0, -1.0, -1.0}, {0, 1}),
+               Vertex({1.0, -1.0, -1.0}, {1, 1}),
+               Vertex({1.0, -1.0, 1.0}, {1, 0}),
               }, 
               { 0, 1, 2, 2, 3, 0,
                 4, 5, 6, 6, 7, 4,
@@ -111,37 +114,48 @@ int main()
                 20, 21, 22, 22, 23, 20
               });
 
-    Camera camera{Vector{0, 0, -3}, Vector{0, 0, 1}, Vector{0, 1, 0}};
-    
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    shaderProgram.use();
-    auto mmLoc = shaderProgram.getUniformLocation("modelMatrix");
-    auto vmLoc = shaderProgram.getUniformLocation("viewMatrix");
-    auto pmLoc = shaderProgram.getUniformLocation("projectionMatrix");
-
-    float aspectRatio = (float)window.getWidth() / window.getHeight();
-    Matrix projectionMatrix = Matrix::initPerspective(M_PI / 2, aspectRatio, 0.1, 1000);
-
-    glUniformMatrix4fv(pmLoc, 1, GL_TRUE, projectionMatrix.getData());
-
-    float angle = M_PI / 2;
-    while(window.isRunning())
+    try
     {
-      input(window, camera);
+      Texture crateTexture{"res/crate.jpg"};
+
+      Camera camera{Vector3{0, 0, -3}, Vector3{0, 0, 1}, Vector3{0, 1, 0}};
       
-      glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      shaderProgram.use();
+      auto mmLoc = shaderProgram.getUniformLocation("modelMatrix");
+      auto vmLoc = shaderProgram.getUniformLocation("viewMatrix");
+      auto pmLoc = shaderProgram.getUniformLocation("projectionMatrix");
 
-      glUniformMatrix4fv(vmLoc, 1, GL_TRUE, camera.getViewMatrix().getData());
+      auto diffuseLoc = shaderProgram.getUniformLocation("diffuse");
+      glUniform1i(diffuseLoc, 0);
 
-      Matrix modelMatrix = Matrix::initRotation(angle, angle / 2, 0);
-      glUniformMatrix4fv(mmLoc, 1, GL_TRUE, modelMatrix.getData());
-      cube.draw();
+      float aspectRatio = (float)window.getWidth() / window.getHeight();
+      Matrix projectionMatrix = Matrix::initPerspective(M_PI / 2, aspectRatio, 0.1, 1000);
 
-      window.update();
+      glUniformMatrix4fv(pmLoc, 1, GL_TRUE, projectionMatrix.getData());
 
-      angle += 0.015;
+      float angle = M_PI / 2;
+      while(window.isRunning())
+      {
+        input(window, camera);
+        
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glUniformMatrix4fv(vmLoc, 1, GL_TRUE, camera.getViewMatrix().getData());
+
+        Matrix modelMatrix = Matrix::initRotation(angle, angle / 2, 0);
+        glUniformMatrix4fv(mmLoc, 1, GL_TRUE, modelMatrix.getData());
+        crateTexture.bind();
+        cube.draw();
+
+        window.update();
+
+        angle += 0.015;
+      }
+    }
+    catch(std::exception& ex)
+    {
+      std::cout << ex.what() << "\n";
     }
   }
   catch(std::runtime_error& err)

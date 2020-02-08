@@ -22,8 +22,11 @@ set(PROJECT_CODE
   include/renderer/mesh.hpp src/renderer/mesh.cpp
   include/renderer/matrix.hpp src/renderer/matrix.cpp
   include/renderer/camera.hpp src/renderer/camera.cpp
-  include/renderer/vector.hpp
+  include/renderer/texture.hpp src/renderer/texture.cpp
+  include/renderer/vector3.hpp
+  include/renderer/vector2.hpp
   include/renderer/vertex.hpp
+  src/renderer/stb_image.cpp
   src/glad/glad.c
   src/renderer/main.cpp)
 

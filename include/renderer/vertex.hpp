@@ -1,20 +1,22 @@
 #pragma once
 
-#include "vector.hpp"
+#include "vector3.hpp"
+#include "vector2.hpp"
 
 class Vertex
 {
 public:
-  Vertex(const Vector& position, const Vector& color): position_(position), color_(color) {}
+  Vertex(const Vector3& position, const Vector2& texCoord): position_(position), texCoord_(texCoord) {}
 
-  inline const Vector& getPosition() const { return position_; }
-  inline Vector& getPosition() { return position_; }
-  inline void setPosition(const Vector& position) { position_ = position; }
-  inline const Vector& getColor() const { return color_; }
-  inline Vector& getColor() { return color_; }
-  inline void setColor(const Vector& color) { color_ = color; }
+  inline void setPosition(const Vector3& position) { position_ = position; }
+  inline void setColor(const Vector2& texCoord) { texCoord_ = texCoord; }
+
+  inline const Vector3& getPosition() const { return position_; }
+  inline const Vector2& getTexCoord() const { return texCoord_; }
+  inline Vector3& getPosition() { return position_; }
+  inline Vector2& getTexCoord() { return texCoord_; }
 
 private:
-  Vector position_;
-  Vector color_;
+  Vector3 position_;
+  Vector2 texCoord_;
 };

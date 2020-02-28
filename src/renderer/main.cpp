@@ -2,9 +2,6 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
 #include <cmath>
 
 #include "window.hpp"
@@ -55,16 +52,6 @@ int main()
   Window window{"OpenGL", WINDOW_WIDTH, WINDOW_HEIGHT};
   window.setResizeCallback(onResize);
 
-  std::ifstream vsFile("vertexShader.vs.glsl");
-  std::stringstream vsStream;
-  vsStream << vsFile.rdbuf();
-  vsFile.close();
-
-  std::ifstream fsFile("fragmentShader.fs.glsl");
-  std::stringstream fsStream;
-  fsStream << fsFile.rdbuf();
-  fsFile.close();
-
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glFrontFace(GL_CW);
@@ -74,7 +61,7 @@ int main()
 
   try
   {
-    ShaderProgram shaderProgram(vsStream.str().c_str(), fsStream.str().c_str());
+    ShaderProgram shaderProgram("vertexShader.vs.glsl", "fragmentShader.fs.glsl");
     
     Mesh cube({Vertex({-1.0, -1.0, -1.0}, {0, 0}), // front
                Vertex({-1.0, 1.0, -1.0}, {0, 1}),

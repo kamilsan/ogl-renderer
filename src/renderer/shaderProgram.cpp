@@ -1,12 +1,16 @@
 #include "shaderProgram.hpp"
 
 #include <stdexcept>
+#include <fstream>
 #include <sstream>
 
-ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
+ShaderProgram::ShaderProgram(const char* vertexShaderFile, const char* fragmentShaderFile)
 {
-  auto vertexShader = createCompiledShader(vertexShaderSource, GL_VERTEX_SHADER);
-  auto fragmentShader = createCompiledShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
+  std::string vertexShaderSource = getShaderFileContet(vertexShaderFile);
+  std::string fragmentShaderSource = getShaderFileContet(fragmentShaderFile);
+
+  auto vertexShader = createCompiledShader(vertexShaderSource.c_str(), GL_VERTEX_SHADER);
+  auto fragmentShader = createCompiledShader(fragmentShaderSource.c_str(), GL_FRAGMENT_SHADER);
 
   program_ = glCreateProgram();
   glAttachShader(program_, vertexShader);
@@ -38,7 +42,17 @@ GLuint ShaderProgram::getUniformLocation(const std::string& name) const
   return glGetUniformLocation(program_, name.c_str());
 }
 
-GLuint ShaderProgram::createCompiledShader(const char* source, unsigned int shaderType)
+std::string ShaderProgram::getShaderFileContet(const char* shaderFile) const
+{
+  std::ifstream file(shaderFile);
+  std::stringstream stream;
+  stream << file.rdbuf();
+  file.close();
+
+  return stream.str();
+}
+
+GLuint ShaderProgram::createCompiledShader(const char* source, unsigned int shaderType) const
 {
   auto shader = glCreateShader(shaderType);
   glShaderSource(shader, 1, &source, NULL);
